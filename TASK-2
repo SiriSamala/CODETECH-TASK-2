@@ -1,53 +1,64 @@
-Name:MOKSHAGNA DOKKU
+/* It implements a simple linear regression model using a dataset with continuous
+target variables. Split the data into training and testing sets, train the model on
+the training data, evaluate its performance using metrics like mean squared
+error or R-squared, and make predictions on the test set. Visualize the
+regression line and actual vs. predicted values to assess the model's accuracy */
 
-Company:CODETECH IT SOLUTIONS
 
-Id:CT6WDS3817
+import numpy as np
+import pandas as pd
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
+data = pd.DataFrame(np.hstack([X, y]), columns=['Feature', 'Target'])
+data.head()
 
-Domain:DATA SCIENCE
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(data[['Feature']], data['Target'], test_size=0.2, random_state=42)
 
-Duration:July to August 2024
 
-Mentor:Muzammil
 
-Overview of the Project:
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
 
-Project: EXPLORATORY DATA ANALYSIS (EDA)
-![image](https://github.com/user-attachments/assets/e48c5b1f-ddb3-4d33-9942-e876adf28002)
-![image](https://github.com/user-attachments/assets/89ae9fa2-2acc-47df-8cba-db7a72e8cb0c)
-![image](https://github.com/user-attachments/assets/fb56d3b8-3a7c-4815-a688-9006cd3cb919)
-![image](https://github.com/user-attachments/assets/33169162-325b-41d5-9a0b-cf09979a2020)
-![image](https://github.com/user-attachments/assets/34a19186-c07d-4afa-8438-0ae062e05984)
-![image](https://github.com/user-attachments/assets/91001ee9-045f-4884-bc5e-a9ebe8bc3cc6)
-![image](https://github.com/user-attachments/assets/7d6a3c54-aa07-4272-bfcb-0d1b2104155e)
-![image](https://github.com/user-attachments/assets/b75f899f-e5ed-4da0-8518-434680410153)
-![image](https://github.com/user-attachments/assets/887fcdd3-82bd-4a1a-b34a-c9a78f590732)
+from sklearn.metrics import mean_squared_error, r2_score
+y_train_pred = model.predict(X_train)
+mse_train = mean_squared_error(y_train, y_train_pred)
+r2_train = r2_score(y_train, y_train_pred)
+print(f"Training Set - Mean Squared Error: {mse_train:.2f}, R-squared: {r2_train:.2f}")
 
-Objectives:
+y_test_pred = model.predict(X_test)
 
-  -Perform exploratory data analysis (EDA) on a dataset to understand its characteristics, distributions, correlations, and outliers.
-  -Visualize the findings using various plots to gain insights into the data.
-  
-Key Activities:
+mse_test = mean_squared_error(y_test, y_test_pred)
+r2_test = r2_score(y_test, y_test_pred)
+print(f"Test Set - Mean Squared Error: {mse_test:.2f}, R-squared: {r2_test:.2f}")
 
-  -Data Loading: Load the dataset using pandas.
-  -Data Cleaning: Handle missing values, duplicates, and any inconsistencies in the data.
-  -Data Exploration:
-  -Summary Statistics: Compute summary statistics like mean, median, standard deviation, etc.
-  -Distribution Analysis: Plot histograms and box plots to understand the distribution of variables.
-  -Correlation Analysis: Compute and visualize correlations between variables using heatmaps.
-  -Outlier Detection: Identify and visualize outliers using scatter plots and box plots.
-  -Data Visualization: Use matplotlib and seaborn to create various plots for visualizing the data.
 
-Technologies Used:
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12, 6))
 
-  -Python: The programming language used for the analysis.
-  -pandas: For data manipulation and analysis.
-  -numpy: For numerical operations.
-  -matplotlib: For creating static, animated, and interactive visualizations.
-  -seaborn: For statistical data visualization based on matplotlib.
-Key Insights:
+plt.subplot(1, 2, 1)
+plt.scatter(X_train, y_train, color='blue', label='Training data')
+plt.plot(X_train, y_train_pred, color='red', linewidth=2, label='Regression line')
+plt.title('Training set')
+plt.xlabel('Feature')
+plt.ylabel('Target')
+plt.legend()
 
-  -Distribution of Variables: Histograms and box plots revealed the distribution of the data, highlighting skewness and the presence of outliers.
-  -Correlation between Variables: Heatmaps showed significant correlations between certain pairs of variables, indicating potential relationships.
-  -Outliers: Scatter plots and box plots identified outliers, which could be important for further analysis or modeling.
+plt.subplot(1, 2, 2)
+plt.scatter(X_test, y_test, color='green', label='Testing data')
+plt.plot(X_test, y_test_pred, color='red', linewidth=2, label='Regression line')
+plt.title('Test set')
+plt.xlabel('Feature')
+plt.ylabel('Target')
+plt.legend()
+plt.show()
+
+plt.figure(figsize=(6, 6))
+plt.scatter(y_test, y_test_pred, color='purple')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linewidth=2)
+plt.xlabel('Actual values')
+plt.ylabel('Predicted values')
+plt.title('Actual vs. Predicted values (Test set)')
+plt.show()
